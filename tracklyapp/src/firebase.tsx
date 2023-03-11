@@ -3,7 +3,7 @@ import {getAuth} from 'firebase/auth';
 import {initializeApp} from 'firebase/app';
 import {getDatabase} from 'firebase/database';
 
-const app = initializeApp(firebaseConfig);
+const application = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
-export const database = getDatabase(app);
+export const authentication = getAuth(application);
+export const realtimeDatabase = getDatabase(application);

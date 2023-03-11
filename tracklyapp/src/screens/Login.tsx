@@ -1,21 +1,15 @@
-import {
-  View,
-  Text,
-  Image,
-  Alert,
-  TextInput,
-  Pressable,
-  SafeAreaView,
-} from 'react-native';
-import {database} from '../firebase';
 import React, {useState} from 'react';
+import {useAuth} from '../hooks/useAuth';
 import {useAuthContext} from '../context/AuthContext';
-import {ref, onValue, update} from 'firebase/database';
+import {View, Text, Image, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {DataSnapshot, onValue} from 'firebase/database';
+import {TextInput, Pressable, SafeAreaView} from 'react-native';
 
 const Login = () => {
   const navigate = useNavigation();
-  const {signin, setCredential, setUserId} = useAuthContext();
+  const {signin, getUser, updateStatus} = useAuth();
+  const {setCredential, setUserId} = useAuthContext();
   const [userData, setUserData] = useState<LoginArgs>({
     email: '',
     password: '',
@@ -23,17 +17,17 @@ const Login = () => {
   const handleChanges = (val: string, name: string) => {
     setUserData({...userData, [name]: val});
   };
-  const pushToHome = async () => {
+  const handleSubmit = async () => {
     if (!userData.email || !userData.password) {
       return Alert.alert('Имэйл болон нууц үгээ оруулна уу!');
     }
     const res = await signin(userData.email, userData.password);
-    setUserId(res.user.uid);
-    const driverRef = ref(database, 'drivers/' + res.user.uid);
-    onValue(driverRef, snapshot => {
+    const driverRef = getUser(res.user.uid);
+    onValue(driverRef, (snapshot: DataSnapshot) => {
       const driversDetail = snapshot.val();
+      updateStatus(res.user.uid, true);
       setCredential(driversDetail);
-      update(ref(database, 'drivers/' + res.user.uid), {loggedIn: true});
+      setUserId(res.user.uid);
     });
     navigate.navigate('Home' as never);
   };
@@ -58,7 +52,7 @@ const Login = () => {
           className="mb-16 border border-[#cecccc] py-3 pl-5 rounded-md"
         />
         <Pressable
-          onPress={pushToHome}
+          onPress={handleSubmit}
           className="bg-[#0c1219] active:bg-black/60 py-3 rounded-md">
           <Text className="text-white text-center font-semibold">НЭВТРЭХ</Text>
         </Pressable>

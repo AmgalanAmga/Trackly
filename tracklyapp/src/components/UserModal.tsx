@@ -9,23 +9,23 @@ type UserModalProps = {
 };
 
 export const UserModal = ({openModal, setOpenModal}: UserModalProps) => {
-  const {credential, logout} = useAuthContext();
   const navigate = useNavigation();
+  const {credential} = useAuthContext();
   const handleLogout = () => {
-    logout();
     setOpenModal(false);
-    navigate.navigate('Login' as never);
+    navigate.goBack();
   };
+  const shareMyLocation = () => {};
   return (
     <View>
       <Modal visible={openModal} transparent={true} animationType="slide">
         <View className="flex-1 justify-end bg-black/50">
-          <View className="relative flex flex-col items-center bg-white pt-9 h-72 rounded-t-2xl">
+          <View className="relative flex flex-col items-center bg-white p-6 rounded-t-2xl">
             <Image
               source={{
                 uri: credential?.avatar,
               }}
-              className="w-14 h-14 rounded-full mb-3"
+              className="w-14 h-14 rounded-full mb-1"
             />
             <Pressable
               className="absolute top-2 right-5"
@@ -33,11 +33,13 @@ export const UserModal = ({openModal, setOpenModal}: UserModalProps) => {
               hitSlop={{left: 5, right: 5, top: 5, bottom: 5}}>
               <Text className="text-3xl">-</Text>
             </Pressable>
-            <View className="flex flex-col items-center">
-              <Text className="text-[#0c1219] text-xl font-medium mb-3">
+            <View className="flex flex-col items-center space-y-3">
+              <Text className="text-xl font-medium">
                 {credential?.firstname} {credential?.lastname}
               </Text>
-              <Pressable className="py-3 bg-[#0c1219] mb-3 w-64 rounded-md">
+              <Pressable
+                onPress={shareMyLocation}
+                className="py-3 bg-[#0c1219] w-64 rounded-md active:bg-gray-700">
                 <Text className="text-center text-white">
                   Байршил хуваалцах
                 </Text>

@@ -1,41 +1,22 @@
-import React, {
-  useState,
-  Dispatch,
-  ReactNode,
-  useContext,
-  createContext,
-  SetStateAction,
-} from 'react';
-import {
-  signOut,
-  UserCredential,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import {update, ref} from 'firebase/database';
-import {auth, database} from '../firebase';
+import React, {useState, Dispatch, ReactNode} from 'react';
+import {useContext, createContext, SetStateAction} from 'react';
 
 type AuthContextValues = {
-  logout: () => void;
+  userId: string;
   credential: CredentialType | null;
   setUserId: Dispatch<SetStateAction<string>>;
-  setCredential: Dispatch<SetStateAction<any>>;
-  signin: (email: string, password: string) => Promise<UserCredential>;
+  setCredential: Dispatch<SetStateAction<CredentialType | any>>;
 };
 
 const AuthContext = createContext<AuthContextValues>({} as AuthContextValues);
 
 export const AuthProvider = ({children}: {children: ReactNode}) => {
-  const [credential, setCredential] = useState<any>(null);
   const [userId, setUserId] = useState<string>('');
-  const signin = (email: string, password: string) =>
-    signInWithEmailAndPassword(auth, email, password);
-  const logout = async () => {
-    await update(ref(database, 'drivers/' + userId), {loggedIn: false});
-    await signOut(auth);
-  };
+  const [credential, setCredential] = useState<CredentialType | any>(null);
+
   return (
     <AuthContext.Provider
-      value={{signin, logout, credential, setUserId, setCredential}}>
+      value={{userId, credential, setUserId, setCredential}}>
       {children}
     </AuthContext.Provider>
   );
