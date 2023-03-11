@@ -25,11 +25,15 @@ const Login = () => {
     const driverRef = getUser(res.user.uid);
     onValue(driverRef, (snapshot: DataSnapshot) => {
       const driversDetail = snapshot.val();
-      updateStatus(res.user.uid, true);
       setCredential(driversDetail);
       setUserId(res.user.uid);
     });
+    updateStatus(res.user.uid, true);
     navigate.navigate('Home' as never);
+    setUserData({
+      email: '',
+      password: '',
+    });
   };
 
   return (
@@ -42,12 +46,14 @@ const Login = () => {
         />
         <TextInput
           placeholder="И-мэйл"
+          value={userData.email}
           onChangeText={val => handleChanges(val, 'email')}
           className="mt-12 mb-6 border border-[#cecccc] py-3 pl-5 rounded-md"
         />
         <TextInput
           secureTextEntry
           placeholder="Нууц үг"
+          value={userData.password}
           onChangeText={val => handleChanges(val, 'password')}
           className="mb-16 border border-[#cecccc] py-3 pl-5 rounded-md"
         />

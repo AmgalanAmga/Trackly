@@ -20,10 +20,12 @@ if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
 end
-
+permissions_path = '../node_modules/react-native-permissions/ios'
 target 'tracklyapp' do
   config = use_native_modules!
-
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways"
+  pod 'Permission-LocationAccuracy', :path => "#{permissions_path}/LocationAccuracy"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse"
   # Flags change depending on the env values.
   flags = get_default_flags()
 

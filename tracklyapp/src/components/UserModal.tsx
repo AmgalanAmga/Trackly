@@ -1,7 +1,10 @@
+import {useAuth} from '../hooks/useAuth';
 import {useAuthContext} from '../context/AuthContext';
 import React, {Dispatch, SetStateAction} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import Geolocation from 'react-native-geolocation-service';
 import {View, Text, Image, Modal, Pressable} from 'react-native';
+import {request, PERMISSIONS, PermissionStatus} from 'react-native-permissions';
 
 type UserModalProps = {
   openModal: boolean;
@@ -10,12 +13,33 @@ type UserModalProps = {
 
 export const UserModal = ({openModal, setOpenModal}: UserModalProps) => {
   const navigate = useNavigation();
-  const {credential} = useAuthContext();
+  const {signout, updateStatus} = useAuth();
+  const {credential, userId} = useAuthContext();
+
   const handleLogout = () => {
+    updateStatus(userId, false);
     setOpenModal(false);
     navigate.goBack();
+    signout();
   };
-  const shareMyLocation = () => {};
+
+  const shareMyLocation = () => {
+    request(PERMISSIONS.IOS.LOCATION_ALWAYS).then((res: PermissionStatus) => {
+      if (res === 'granted') {
+        Geolocation.getCurrentPosition(
+          ({coords: {longitude, latitude}}) => {
+            // setUserPosition({latitude, longitude});
+            console.log(longitude, latitude);
+          },
+          err => {
+            console.log(err.message);
+          },
+          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+        );
+      }
+    });
+  };
+
   return (
     <View>
       <Modal visible={openModal} transparent={true} animationType="slide">

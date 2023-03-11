@@ -1,8 +1,6 @@
 import {Dimensions} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import MapView, {Marker} from 'react-native-maps';
-
-import Geolocation from 'react-native-geolocation-service';
 
 export const GetLocation = () => {
   const [userPosition, setUserPosition] = useState<Coordinates>({
@@ -10,20 +8,22 @@ export const GetLocation = () => {
     longitude: 106.85904,
   });
 
-  useEffect(() => {
-    (() => {
-      Geolocation.getCurrentPosition(
-        ({coords: {longitude, latitude}}) => {
-          console.log(longitude, latitude);
-          // setUserPosition({latitude, longitude});
-        },
-        err => {
-          console.log(err.message);
-        },
-        {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-      );
-    })();
-  }, []);
+  // useEffect(() => {
+  //   request(PERMISSIONS.IOS.LOCATION_ALWAYS).then((res: PermissionStatus) => {
+  //     if (res === 'granted') {
+  //       Geolocation.getCurrentPosition(
+  //         ({coords: {longitude, latitude}}) => {
+  //           setUserPosition({latitude, longitude});
+  //           console.log(longitude)
+  //         },
+  //         err => {
+  //           console.log(err.message);
+  //         },
+  //         {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //       );
+  //     }
+  //   });
+  // }, []);
 
   return (
     <MapView
