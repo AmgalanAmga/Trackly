@@ -1,14 +1,7 @@
-import {
-  useState,
-  Dispatch,
-  ReactNode,
-  useEffect,
-  useContext,
-  createContext,
-  SetStateAction,
-} from "react";
 import { auth } from "../firebase";
 import { useAuth } from "../hooks/useAuth";
+import { useState, Dispatch, ReactNode, useEffect } from "react";
+import { useContext, createContext, SetStateAction } from "react";
 import { UserCredential, User, onAuthStateChanged } from "firebase/auth";
 
 type AuthContextvalues = {
@@ -19,7 +12,7 @@ type AuthContextvalues = {
   signup: (email: string, password: string) => Promise<UserCredential>;
 };
 
-const AuthContext = createContext<AuthContextvalues>({} as AuthContextvalues);
+const AuthContext = createContext({} as AuthContextvalues);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { logout, signin, signup } = useAuth(auth);
@@ -31,7 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     return () => unsubscribe();
   }, []);
-  
+
   return (
     <AuthContext.Provider
       value={{ logout, signin, signup, setCredential, credential }}

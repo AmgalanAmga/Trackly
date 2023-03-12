@@ -8,7 +8,7 @@ type AuthContextValues = {
   setCredential: Dispatch<SetStateAction<CredentialType | any>>;
 };
 
-const AuthContext = createContext<AuthContextValues>({} as AuthContextValues);
+const AuthContext = createContext({} as AuthContextValues);
 
 export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [userId, setUserId] = useState<string>('');

@@ -1,18 +1,8 @@
-import {
-  useState,
-  useEffect,
-  ReactNode,
-  useContext,
-  createContext,
-} from "react";
-import {
-  ref,
-  set,
-  onChildAdded,
-  DataSnapshot,
-  onChildChanged,
-} from "firebase/database";
 import { database } from "../firebase";
+import { useContext, createContext } from "react";
+import { useState, useEffect, ReactNode } from "react";
+import { ref, set, DataSnapshot } from "firebase/database";
+import { onChildAdded, onChildChanged } from "firebase/database";
 
 type DataContextValues = {
   createNewDriver: (
@@ -24,7 +14,7 @@ type DataContextValues = {
   inactiveDrivers: DataSnapshot[];
 };
 
-const DataContext = createContext<DataContextValues>({} as DataContextValues);
+const DataContext = createContext({} as DataContextValues);
 
 export const DatabaseProvider = ({ children }: { children: ReactNode }) => {
   const [activeDrivers, setActiveDrivers] = useState<DataSnapshot[]>([]);

@@ -1,24 +1,13 @@
 import {
-  useState,
-  ReactNode,
-  useEffect,
-  useContext,
-  createContext,
-} from "react";
-import {
   getDownloadURL,
   ref as storeRef,
   uploadBytesResumable,
 } from "firebase/storage";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  collection,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
+import { useState, ReactNode } from "react";
 import { firestore, storage } from "../firebase";
+import { useEffect, useContext, createContext } from "react";
+import { doc, setDoc, getDocs, collection } from "firebase/firestore";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 type MainContextValue = {
   createNewDriverToFirestore: any;
@@ -26,14 +15,13 @@ type MainContextValue = {
   uploadDriverImg: (imageFile: File) => Promise<string>;
 };
 
-const MainContext = createContext<MainContextValue>({} as MainContextValue);
+const MainContext = createContext({} as MainContextValue);
 
 export const MainProvider = ({ children }: { children: ReactNode }) => {
   const [admins, setAdmins] = useState<QueryDocumentSnapshot<DocumentData>[]>(
     []
   );
 
-  /* Storage */
   const uploadDriverImg = async (imageFile: File) => {
     const storageRef = storeRef(storage, `images/${imageFile.name}`);
     const uploadImg = uploadBytesResumable(storageRef, imageFile);

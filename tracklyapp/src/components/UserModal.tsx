@@ -1,7 +1,7 @@
 import {useAuth} from '../hooks/useAuth';
-import {useAuthContext} from '../context/AuthContext';
 import React, {Dispatch, SetStateAction} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import {useAuthContext, useMainContext} from '../context';
 import Geolocation from 'react-native-geolocation-service';
 import {View, Text, Image, Modal, Pressable} from 'react-native';
 import {request, PERMISSIONS, PermissionStatus} from 'react-native-permissions';
@@ -15,6 +15,7 @@ export const UserModal = ({openModal, setOpenModal}: UserModalProps) => {
   const navigate = useNavigation();
   const {signout, updateStatus} = useAuth();
   const {credential, userId} = useAuthContext();
+  const {setUserPosition, updatePosition, setSharePosition} = useMainContext();
 
   const handleLogout = () => {
     updateStatus(userId, false);
@@ -28,13 +29,14 @@ export const UserModal = ({openModal, setOpenModal}: UserModalProps) => {
       if (res === 'granted') {
         Geolocation.getCurrentPosition(
           ({coords: {longitude, latitude}}) => {
+            setSharePosition(true);
             // setUserPosition({latitude, longitude});
-            console.log(longitude, latitude);
+            // updatePosition(userId, {latitude, longitude});
           },
           err => {
             console.log(err.message);
           },
-          {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+          {enableHighAccuracy: true},
         );
       }
     });
