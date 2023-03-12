@@ -1,5 +1,6 @@
+import {useAuthContext} from './AuthContext';
 import {realtimeDatabase} from '../firebase';
-import {update, ref} from 'firebase/database';
+import {set, ref, update} from 'firebase/database';
 import Geolocation from 'react-native-geolocation-service';
 import {useContext, createContext, SetStateAction} from 'react';
 import React, {useState, Dispatch, ReactNode, useEffect} from 'react';
@@ -16,6 +17,7 @@ type MainContextValues = {
 const MainContext = createContext({} as MainContextValues);
 
 export const MainProvider = ({children}: {children: ReactNode}) => {
+  const {credential, userId: currentId} = useAuthContext();
   const [userPosition, setUserPosition] = useState<Coordinates>({
     latitude: 47.880848,
     longitude: 106.85904,
@@ -26,15 +28,30 @@ export const MainProvider = ({children}: {children: ReactNode}) => {
   const updatePosition = (userId: string) => {
     request(PERMISSIONS.IOS.LOCATION_ALWAYS).then((res: PermissionStatus) => {
       if (res === 'granted') {
-        Geolocation.watchPosition(({coords: {latitude, longitude}}) => {
-          update(ref(realtimeDatabase, 'drivers/' + userId), {
+        Geolocation.getCurrentPosition(({coords: {latitude, longitude}}) => {
+          set(ref(realtimeDatabase, 'driversPosition/' + userId), {
+            email: credential?.email,
+            fullname: credential?.firstname,
             location: {latitude, longitude},
+            phonenumber: credential?.phonenumber,
           });
         });
         setSharePosition(true);
       }
     });
   };
+
+  /* Update user's position */
+  useEffect(() => {
+    if (sharePosition) {
+      Geolocation.watchPosition(({coords: {latitude, longitude}}) => {
+        update(ref(realtimeDatabase, 'driversPosition/' + currentId), {
+          location: {latitude, longitude},
+        });
+        console.log('res');
+      });
+    }
+  }, [sharePosition]);
 
   /* Get location when user logged in. */
   useEffect(() => {

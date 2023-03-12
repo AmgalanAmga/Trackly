@@ -14,14 +14,12 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
   const [activeDrivers, setActiveDrivers] = useState<DataSnapshot[]>([]);
 
   useEffect(() => {
-    const drivers = ref(database, "drivers/");
+    const drivers = ref(database, "driversPosition/");
     onChildChanged(drivers, (snapShot) => {
       const driver = snapShot.val();
-      if (driver.loggedIn) {
-        setActiveDrivers((pre: DataSnapshot[]) => {
-          return [...pre, driver];
-        });
-      }
+      setActiveDrivers((pre: DataSnapshot[]) => {
+        return [...pre, driver];
+      });
     });
   }, []);
 
