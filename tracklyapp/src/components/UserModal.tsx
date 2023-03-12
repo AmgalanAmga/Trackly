@@ -2,9 +2,7 @@ import {useAuth} from '../hooks/useAuth';
 import React, {Dispatch, SetStateAction} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useAuthContext, useMainContext} from '../context';
-import Geolocation from 'react-native-geolocation-service';
 import {View, Text, Image, Modal, Pressable} from 'react-native';
-import {request, PERMISSIONS, PermissionStatus} from 'react-native-permissions';
 
 type UserModalProps = {
   openModal: boolean;
@@ -15,31 +13,19 @@ export const UserModal = ({openModal, setOpenModal}: UserModalProps) => {
   const navigate = useNavigation();
   const {signout, updateStatus} = useAuth();
   const {credential, userId} = useAuthContext();
-  const {setUserPosition, updatePosition, setSharePosition} = useMainContext();
+  const {updatePosition, setSharePosition} = useMainContext();
 
   const handleLogout = () => {
     updateStatus(userId, false);
+    setSharePosition(false);
     setOpenModal(false);
     navigate.goBack();
     signout();
   };
 
   const shareMyLocation = () => {
-    request(PERMISSIONS.IOS.LOCATION_ALWAYS).then((res: PermissionStatus) => {
-      if (res === 'granted') {
-        Geolocation.getCurrentPosition(
-          ({coords: {longitude, latitude}}) => {
-            setSharePosition(true);
-            // setUserPosition({latitude, longitude});
-            // updatePosition(userId, {latitude, longitude});
-          },
-          err => {
-            console.log(err.message);
-          },
-          {enableHighAccuracy: true},
-        );
-      }
-    });
+    setOpenModal(false);
+    updatePosition(userId);
   };
 
   return (

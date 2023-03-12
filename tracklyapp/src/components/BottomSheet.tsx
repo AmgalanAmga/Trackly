@@ -1,10 +1,11 @@
 import {UserModal} from './UserModal';
 import React, {useState} from 'react';
-import {useAuthContext} from '../context/AuthContext';
+import {useAuthContext, useMainContext} from '../context';
 import {View, Text, Image, Pressable} from 'react-native';
 
 export const BottomSheet = () => {
   const {credential} = useAuthContext();
+  const {sharePosition} = useMainContext();
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   return (
@@ -22,7 +23,9 @@ export const BottomSheet = () => {
           <View className="ml-4">
             <Text className="font-semibold">{credential?.firstname}</Text>
             <Text className="text-sm text-gray-400">
-              Та байршлаа хуваалцаагүй байна.
+              {sharePosition
+                ? 'Та байршлаа хуваалцаж байна.'
+                : 'Та байршлаа хуваалцаагүй байна.'}
             </Text>
           </View>
         </View>

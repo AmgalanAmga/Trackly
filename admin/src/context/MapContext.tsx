@@ -1,21 +1,35 @@
 import { database } from "../firebase";
 import { useContext, createContext } from "react";
-import { onChildChanged, onChildAdded } from "firebase/database";
-import { useState, useEffect, ReactNode } from "react";
+import { onChildChanged } from "firebase/database";
 import { ref, DataSnapshot } from "firebase/database";
+import { useState, useEffect, ReactNode } from "react";
 
-type MapContextValues = {};
+type MapContextValues = {
+  activeDrivers: DataSnapshot[];
+};
 
 const MapContext = createContext({} as MapContextValues);
 
 export const MapProvider = ({ children }: { children: ReactNode }) => {
+  const [activeDrivers, setActiveDrivers] = useState<DataSnapshot[]>([]);
+
   useEffect(() => {
     const drivers = ref(database, "drivers/");
-    onChildAdded(drivers, (snapShot) => {
-      // console.log(snapShot.val());
+    onChildChanged(drivers, (snapShot) => {
+      const driver = snapShot.val();
+      if (driver.loggedIn) {
+        setActiveDrivers((pre: DataSnapshot[]) => {
+          return [...pre, driver];
+        });
+      }
     });
   }, []);
-  return <MapContext.Provider value={{}}>{children}</MapContext.Provider>;
+
+  return (
+    <MapContext.Provider value={{ activeDrivers }}>
+      {children}
+    </MapContext.Provider>
+  );
 };
 
 export const useMapContext = () => useContext(MapContext);

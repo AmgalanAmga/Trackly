@@ -41,7 +41,7 @@ export const Employers = () => {
                 {name}
               </h3>
             </div>
-            <div className="mt-4 space-y-2 h-96 overflow-y-auto">
+            <div className="mt-4 space-y-2 overflow-y-auto">
               {drivers.map((el: any, id) => (
                 <div
                   key={id}
