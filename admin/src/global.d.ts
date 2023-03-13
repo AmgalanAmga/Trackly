@@ -13,3 +13,7 @@ type InputType = {
   type: string;
   placeholder: string;
 };
+type Coordinates = {
+  latitude: number;
+  longitude: number;
+};
