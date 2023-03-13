@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMapContext } from "../context";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { CreateEmployForm } from "./CreateEmployForm";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,10 +9,17 @@ import { useDatabaseContext } from "../context/DatabaseContext";
 export const Employers = () => {
   const { inactiveDrivers, activeDrivers } = useDatabaseContext();
   const [createEmploy, setCreateEmploy] = useState<boolean>(false);
+  const { activeDriversPos, setChosenDriversPos } = useMapContext();
   const usersStatus = [
     { name: "Идэвхтэй", drivers: activeDrivers },
     { name: "Идэвхгүй", drivers: inactiveDrivers },
   ];
+  const showDriversPosition = (driversEmail: string) => {
+    const driver: any = activeDriversPos.filter(
+      (el: any) => el.email === driversEmail
+    )[0];
+    setChosenDriversPos(driver.location);
+  };
 
   return (
     <>
@@ -42,10 +50,11 @@ export const Employers = () => {
               </h3>
             </div>
             <div className="mt-4 space-y-2 overflow-y-auto">
-              {drivers.map((el: any, id) => (
+              {drivers.map((el: any, i) => (
                 <div
-                  key={id}
-                  className="flexItemCenter gap-x-3 p-3 bg-white rounded-lg duration-200 hover:bg-gray-300"
+                  key={i}
+                  onClick={() => id === 0 && showDriversPosition(el.email)}
+                  className="flexItemCenter gap-x-3 p-3 bg-white rounded-lg duration-200 cursor-pointer hover:bg-gray-300"
                 >
                   <div className="w-20 h-20 overflow-hidden rounded-lg">
                     <img
