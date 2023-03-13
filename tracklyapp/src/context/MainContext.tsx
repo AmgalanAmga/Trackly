@@ -48,7 +48,6 @@ export const MainProvider = ({children}: {children: ReactNode}) => {
         update(ref(realtimeDatabase, 'driversPosition/' + currentId), {
           location: {latitude, longitude},
         });
-        console.log('res');
       });
     }
   }, [sharePosition]);
