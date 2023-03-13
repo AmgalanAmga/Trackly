@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useAuth} from '../hooks/useAuth';
+import {FirebaseError} from 'firebase/app';
 import {useAuthContext} from '../context/AuthContext';
 import {View, Text, Image, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -18,22 +19,30 @@ const Login = () => {
     setUserData({...userData, [name]: val});
   };
   const handleSubmit = async () => {
-    if (!userData.email || !userData.password) {
-      return Alert.alert('Имэйл болон нууц үгээ оруулна уу!');
+    try {
+      if (!userData.email || !userData.password) {
+        return Alert.alert('Имэйл болон нууц үгээ оруулна уу!');
+      }
+      const res = await signin(userData.email, userData.password);
+      const driverRef = getUser(res.user.uid);
+      onValue(driverRef, (snapshot: DataSnapshot) => {
+        const driversDetail = snapshot.val();
+        setCredential(driversDetail);
+        setUserId(res.user.uid);
+      });
+      updateStatus(res.user.uid, true);
+      navigate.navigate('Home' as never);
+      setUserData({
+        email: '',
+        password: '',
+      });
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/wrong-password') {
+          Alert.alert('Нууц үг буруу байна.');
+        }
+      }
     }
-    const res = await signin(userData.email, userData.password);
-    const driverRef = getUser(res.user.uid);
-    onValue(driverRef, (snapshot: DataSnapshot) => {
-      const driversDetail = snapshot.val();
-      setCredential(driversDetail);
-      setUserId(res.user.uid);
-    });
-    updateStatus(res.user.uid, true);
-    navigate.navigate('Home' as never);
-    setUserData({
-      email: '',
-      password: '',
-    });
   };
 
   return (
