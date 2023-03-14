@@ -23,9 +23,11 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
     const drivers = ref(database, "driversPosition/");
     onChildAdded(drivers, (snapShot) => {
       const driver = snapShot.val();
-      setActiveDriversPos((pre: DataSnapshot[]) => {
-        return [...pre, driver];
-      });
+      if (driver.loggedIn) {
+        setActiveDriversPos((pre: DataSnapshot[]) => {
+          return [...pre, driver];
+        });
+      }
     });
   }, []);
 
@@ -33,9 +35,18 @@ export const MapProvider = ({ children }: { children: ReactNode }) => {
     const drivers = ref(database, "driversPosition/");
     onChildChanged(drivers, (snapShot) => {
       const driver = snapShot.val();
-      setActiveDriversPos((pre: any) => {
-        return [...pre.filter((el: any) => el.email !== driver.email), driver];
-      });
+      if (driver.loggedIn) {
+        setActiveDriversPos((pre: any) => {
+          return [
+            ...pre.filter((el: any) => el.email !== driver.email),
+            driver,
+          ];
+        });
+      } else {
+        setActiveDriversPos((pre: any) => {
+          return pre.filter((el: any) => el.email !== driver.email);
+        });
+      }
     });
   }, []);
 

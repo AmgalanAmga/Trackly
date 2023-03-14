@@ -10,6 +10,7 @@ const App = () => {
 
   useEffect(() => {
     credential && navigate("/process");
+    // eslint-disable-next-line
   }, [credential]);
 
   return (
